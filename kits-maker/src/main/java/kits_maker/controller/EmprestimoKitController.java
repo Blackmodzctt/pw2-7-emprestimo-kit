@@ -49,13 +49,16 @@ public class EmprestimoKitController {
         }
     }
 
+    // GET - Listar todos os empréstimos
     @GetMapping
     public ResponseEntity<List<EmprestimoKit>> listar() {
 
-        return ResponseEntity.ok(repository.findAll());
+        List<EmprestimoKit> lista = repository.findAll();
 
+        return ResponseEntity.ok(lista);
     }
 
+    // GET - Buscar empréstimo por ID
     @GetMapping("/{id}")
     public ResponseEntity<EmprestimoKit> buscarPorId(@PathVariable Long id) {
 
@@ -64,9 +67,9 @@ public class EmprestimoKitController {
                         HttpStatus.NOT_FOUND, "Empréstimo não encontrado"));
 
         return ResponseEntity.ok(emprestimo);
-
     }
 
+    // POST - Cadastrar empréstimo
     @PostMapping
     public ResponseEntity<EmprestimoKit> cadastrar(
             @Valid @RequestBody EmprestimoRequest dados) {
@@ -84,9 +87,9 @@ public class EmprestimoKitController {
         EmprestimoKit salvo = repository.save(emprestimo);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
-
     }
 
+    // PUT - Atualizar empréstimo
     @PutMapping("/{id}")
     public ResponseEntity<EmprestimoKit> atualizar(
             @PathVariable Long id,
@@ -102,9 +105,9 @@ public class EmprestimoKitController {
         EmprestimoKit atualizado = repository.save(emprestimo);
 
         return ResponseEntity.ok(atualizado);
-
     }
 
+    // DELETE - Excluir empréstimo
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
 
@@ -116,36 +119,6 @@ public class EmprestimoKitController {
         repository.deleteById(id);
 
         return ResponseEntity.noContent().build();
-
-    }
-
-    @PatchMapping("/{id}/devolver")
-    public ResponseEntity<EmprestimoKit> devolver(@PathVariable Long id) {
-
-        EmprestimoKit emprestimo = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Empréstimo não encontrado"));
-
-        if (!emprestimo.getStatus().equals("EM_USO")) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Este kit já foi devolvido anteriormente.");
-        }
-
-        LocalTime agora = LocalTime.now().withNano(0);
-
-        emprestimo.setHorarioDevolucaoReal(agora);
-
-        if (agora.isAfter(emprestimo.getHorarioLimiteDevolucao())) {
-            emprestimo.setStatus("DEVOLVIDO_COM_ATRASO");
-        } else {
-            emprestimo.setStatus("DEVOLVIDO_NO_PRAZO");
-        }
-
-        EmprestimoKit atualizado = repository.save(emprestimo);
-
-        return ResponseEntity.ok(atualizado);
-
     }
 
 }
