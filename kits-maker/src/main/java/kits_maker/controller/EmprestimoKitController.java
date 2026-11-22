@@ -6,6 +6,8 @@ import kits_maker.repository.EmprestimoKitRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,8 @@ public class EmprestimoKitController {
         this.repository = repository;
     }
 
+    @Setter
+    @Getter
     public static class EmprestimoRequest {
 
         @NotBlank
@@ -32,21 +36,6 @@ public class EmprestimoKitController {
         @NotBlank
         private String nomeAluno;
 
-        public String getCodigoKit() {
-            return codigoKit;
-        }
-
-        public void setCodigoKit(String codigoKit) {
-            this.codigoKit = codigoKit;
-        }
-
-        public String getNomeAluno() {
-            return nomeAluno;
-        }
-
-        public void setNomeAluno(String nomeAluno) {
-            this.nomeAluno = nomeAluno;
-        }
     }
 
     // GET - Listar todos os empréstimos
